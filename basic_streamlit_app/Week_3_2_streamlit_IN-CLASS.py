@@ -27,11 +27,6 @@ st.checkbox("Check me!")
 # Slider
 st.slider('slide', min_value=1, max_value=10)
 
-# Feedback
-#st.feedback(options="thumbs", *, key=None, disabled=False, on_change=None, args=None, kwargs=None)
-sent = ["one", "two", "three", "four", "five"]
-selected = st.feedback('stars')
-
 # ------------------------
 # COLOR PICKER WIDGET
 # ------------------------
