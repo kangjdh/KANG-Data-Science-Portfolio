@@ -1,3 +1,11 @@
+# instructions on running this app:
+# open terminal
+# add new terminal if necessary
+# enter "ls" to view directory
+# enter "cd .\basic_streamlit_app\" to enter folder
+# enter "ls" again to look at directory of basic_streamlit_app
+# enter "streamlit run main.py" to open app
+
 import streamlit as st
 import pandas as pd
 
