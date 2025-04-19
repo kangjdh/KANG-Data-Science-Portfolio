@@ -8,7 +8,32 @@ This portfolio is a collection of my earliest data science works completed durin
 [KANG-Data-Science-Portfolio](https://github.com/kangjdh/KANG-Data-Science-Portfolio)
 <br>
 
-**Tidy Data Project - (2025)** 🌻  
-This repository includes my first steps into learning and understanding data wrangling and **data tidying** as a vital part of data science. The project contained within focuses on reorganizing the data on R&D spending by government departments into an organized, readable structure along with basic pivot tables created using the tidy data aimed to exemplify the purpose of tidying data. This project too is an extension of my journey into exploring data science as a student studying the subject at the <em> University of Notre Dame.</em> <br>
-[TidyData-Project](https://github.com/kangjdh/TidyData-Project)  
+---
+
+**Tidy Data Project - (2025)** 🌻 
+
+❓ _Question_: How do we organize and/or prepare data?
+
+> This repository includes my first steps into learning and understanding data wrangling and ***data tidying*** as a vital part of data science. The project contained within focuses on reorganizing the data on R&D spending by government departments into an organized, readable structure along with basic pivot tables created using the tidy data aimed to exemplify the purpose of tidying data. This project too is an extension of my journey into exploring data science as a student studying the subject at the <em> University of Notre Dame.</em> <br>
+
+📗 _Languages & Tools_: Jupyter Notebook <image src="https://pydata.org/wp-content/uploads/2016/07/jupyter-logo-300.png" alt="image" width="22"/>, VSCode <image src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/2048px-Visual_Studio_Code_1.35_icon.svg.png" alt="image" width="20">
+
+#️⃣ _Key Words_: `Data Tidying` `Data Wrangling` `Pivot Plots` `R&D Spending` `Pandas`
+
+[TidyData-Project](https://github.com/kangjdh/KANG-Data-Science-Portfolio/tree/main/Tidy_Data-Project)
+
+---
+
+**Supervised Machine Learning Application - (2025)** 🌹
+
+❓ _Question_: How can we use supervised machine learning to make sense of the data?
+
+> This folder contains by first streamlit app that aims to allow users to input datasets and experiment with different ___supervised machine learning___ models, their hyperparameters if applicable, and the effect on the results and model quality. This project grows my understanding on machine learning by teaching me how each model, linear regression, logistic regression, and decision tree, uses the features and dataset given to derive its prediction. This still further enhanced my data science skills by allowing me to make user interactive apps, expanding my ability to work with various datasets and even other people. \
+
+📗 _Languages & Tools_: Python <image src="https://github.com/user-attachments/assets/d332cdc3-f10c-4e89-8f68-9ac60d85d7bc" alt='image' width='20'>
+, VSCode <image src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/2048px-Visual_Studio_Code_1.35_icon.svg.png" alt="image" width="20">, Streamlit <image src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGDKmSgL7UJ6sstMUQTtjI2iDN7ClN2jRZ5Q&s' alt='image' height='22'>
+
+#️⃣ _Key Words_: `Supervised Machine Learning` `Linear Regression` `Logistic Regression` `Decision Tree` `Feedback Performance` `User Interactive` `Streamlit App`
+
+[Supervised Machine Learning App](https://github.com/kangjdh/KANG-Data-Science-Portfolio/tree/main/MLStreamlitApp)
 
