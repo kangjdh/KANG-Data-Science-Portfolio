@@ -290,7 +290,7 @@ st.markdown("---")
 
 
 ## performance feedback
-st.subheader(":mag: **Review Performance Feedback**", divider='orange')
+st.subheader(":mag: **Review Results & Performance Feedback**", divider='orange')
 
 st.write(':orange-badge[Step 4:] **Check out the model-derived results:**')
 
@@ -332,11 +332,11 @@ if 'dt_accuracy' in st.session_state:
 
 st.markdown("---")
 
-st.write(':red-badge[Step 5:] **Observe model performnace feedback/evaluation metrics:**')
+st.write(':red-badge[Step 5:] **Observe model performance feedback/evaluation metrics:**')
 
 # show model performance feedback for linear regression
 if 'mse' in st.session_state and 'rmse' in st.session_state and 'r2' in st.session_state:
-    st.markdown('##### Performance Metrics')
+    st.markdown('##### Regression Evaluation Metrics')
     st.write(f":green-background[**Mean Squared Error (MSE):**] {st.session_state.mse:.3f}")
     st.write(f":violet-background[**Root Mean Squared Error (RMSE):**] {st.session_state.rmse:.3f}")
     st.write(f':red-background[**R-squared (R² Score):**] {st.session_state.r2:.3f}')
@@ -436,6 +436,3 @@ if 'dt_accuracy' in st.session_state:
                
                :blue[***AUC***], or **area under the curve**, summarizes the overall model performance into a single metric, with 1.0 representing \
                a perfect delineation and 0.5 indicating the model is equivalent to random guessing.''')
-
-# fix text input for decision tree max depth
-# maybe add max leaf nodes? not necessary though
