@@ -435,4 +435,5 @@ if 'dt_accuracy' in st.session_state:
                randomly guessing.
                
                :blue[***AUC***], or **area under the curve**, summarizes the overall model performance into a single metric, with 1.0 representing \
+<<<<<<< HEAD
                a perfect delineation and 0.5 indicating the model is equivalent to random guessing.''')
