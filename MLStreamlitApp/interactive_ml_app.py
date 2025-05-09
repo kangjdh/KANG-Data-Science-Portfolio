@@ -27,41 +27,55 @@ if 'df' not in st.session_state:
 
 # allow users to add dataset of choice
 custom_dataset = st.file_uploader(':violet-badge[Step 1:] **Upload your .csv dataset file here**:', type=['csv'])
+# if user adds a custom dataset in file uploader written above, custom dataset will no longer hold the 'None' 
+# status it did when the df was initialized
 if custom_dataset is not None:
     st.session_state.df = pd.read_csv(custom_dataset)
 
 # add dataset options
 st.write('Here are some example datasets to try out!')
 
+# create columns to place example datasets side by side
 col1, col2, col3, = st.columns(3)
+# first column will be California Housing
 with col1:
     if st.button('California Housing:house:', key='house'):
+        # collect dataset from sklearn.datasets and set as df
         from sklearn.datasets import fetch_california_housing
         data = fetch_california_housing()
         df = pd.DataFrame(data.data, columns=data.feature_names)
         df['target'] = data.target
         st.session_state.df = df
+# second column will be Titanic dataset
 with col2:
     if st.button('Titanic:boat:', key='boat'):
+        # collect dataset from seaborn and set as df
         df = sns.load_dataset('titanic')
         st.session_state.df = df
+# third column will be Iris
 with col3:
     if st.button('Iris:eye:'):
+        # collect dataset from sklearn.datasets and set as df
         from sklearn.datasets import load_iris
         data = load_iris()
         df = pd.DataFrame(data.data, columns=data.feature_names)
         df['target'] = data.target
         st.session_state.df = df
 
+# write a little note explaining that only Titanic dataset will be applicable for all supervised
+# machine learning models presented in app
 st.write(':red[**Note:**] of the example datasets, only the "Titanic" dataset can be applied to all' \
             ' three model options given.')
 
+# rename st.session_state.df to dataset for simplicity an readability of code
 dataset = st.session_state.df
 
 # button to preview chosen dataset
 if dataset is not None:
     if st.button('Dataset Preview', type='primary'):
+        # first five columns of dataset
         st.dataframe(dataset.head())
+        # print shape of dataset and explain
         st.write(dataset.shape)
         st.caption('The numbers within the parantheses above indicates number of rows' \
         ' and number of columns in the dataset, respectively')
@@ -75,33 +89,41 @@ st.write("Now that you've uploaded your dataset, the next step is to select a su
 st.write("But first, let's determine what information is going to be used and found.")
 st.write(':blue-badge[Step 2:] **Select features and target:**')
 
+# choosing features and target will only be available if user has defined dataset
 if dataset is not None:
    
+    # allow users to select which of the columns will be features (mulitple can be selected)
     features_columns = st.multiselect("Select features (X):", dataset.columns.tolist())
     st.caption('The ***features*** are the columns from the dataset that will be used' \
     ' in the supervised machine learning model.')
     
+    # allow users to select which of the columns will be the target (only one can be selected)
     target_column = st.selectbox("Select target (y):", dataset.columns.tolist())
     st.caption('The ***target*** is the column that the machine learning model' \
     ' will aim to find/calculate.')
 
+# input options where user can adjust dataset as needed
 st.write(':blue-badge[Step 2.1:] **Adjust features (if necessary):**')
 
 # drop rows to handle missing values
 st.write("You may want to drop rows with missing values based on their quantity per" \
 " feature. Here is a list of features with their number of missing values.")
 
+# adjusting features and target will only be available if user has defined dataset
 if dataset is not None:
 # check how many missing values each feature has
     missing_values = dataset[features_columns].isnull().sum()
     missing_values = missing_values[missing_values > 0]
+    # if there are no missing values write a note saying so
     if missing_values.empty:
         st.write("There are no missing values in the dataset! :smile:")
+    # if missing values exist print the feature names and how many are missing
     else:
         st.dataframe(missing_values.reset_index().rename(columns={
             'index': 'Feature',
             0: 'Quantity of Missing Values'}))
         
+    # allow users to select which features to drop from dataset after viewing missing value per feature
     drop_checkbox = st.multiselect('Choose features to drop missing values for:',
                                    options = missing_values.index)
     if drop_checkbox:
@@ -115,11 +137,15 @@ if dataset is not None:
 # encode categorical variables
         categoricals = X.select_dtypes(include=['object', 'category']).columns
         if len(categoricals) > 0:
+            # let users know that categorical features have been encoded
+            # this is not an option, it must be done or dropped
             st.warning(f':warning: Categorical column(s) {list(categoricals)} detected and encoded :warning:')
             st.caption('The columns mentioned above were determined to have non-numeric variables and were ' \
             ' appropriately switched to numbers to allow proper calculations for the models.')
+        # drop first of encoded to only leave one of each of the encoded features
         X = pd.get_dummies(X, drop_first=True)
 
+    # button to preview new features
     if st.button('Features Preview', type = 'primary', key='frog'):
         st.dataframe(X.head())
         st.write(X.shape)
@@ -128,9 +154,11 @@ st.markdown("---")
 
 st.write(':green-badge[Step 3:] **Choose a model to apply to your dataset:**')
 
-# display the buttons side by side
+# display the buttons side by side using column feature
 col_model_1, col_model_2, col_model_3 = st.columns(3)
 
+# the following if statements will make sure that only one model is being displayed at a time, even 
+# after switching between models using the same dataset, by making the model 'False' if not stored in session_state
 if 'run_linreg' not in st.session_state:
     st.session_state.run_linreg = False
 if 'run_logreg' not in st.session_state:
@@ -138,33 +166,44 @@ if 'run_logreg' not in st.session_state:
 if 'run_dt' not in st.session_state:
     st.session_state.run_dt = False
 
+# first column : linear regression
+# if linear regression is chosen, only the linear regression model will be run and all else is false
 with col_model_1:
     if st.button('Linear Regression (Scaled)'):
         st.session_state.run_linreg = True
         st.session_state.run_logreg = False
         st.session_state.run_dt = False
+# second column : logistic regression
+# if logistic regression is chosen, only logistic regression model will be run and all else is false
 with col_model_2:
     if st.button("Logistic Regression"):
         st.session_state.run_logreg = True
         st.session_state.run_linreg = False
         st.session_state.run_dt = False
+# third column : decision tree
+# if decision tree is chosen, only decision tree model will be run and all else is false
 with col_model_3:
     if st.button('Decision Tree'):
         st.session_state.run_dt = True
         st.session_state.run_linreg = False
         st.session_state.run_logreg = False
 
+# del_prev_results will delete previous results derived from models run previously
+# define model keys associated with each model
 def del_prev_results(exclude=None):
     model_keys = {
         'lin_reg_scaled': ['mse', 'rmse', 'r2', 'model_coef'],
         'logreg_model': ['logreg_model', 'logreg_accuracy', 'logreg_y_test', 'logreg_y_pred', 'logreg_cm', 'logreg_report', 'logreg_coef', 'logreg_intercept'],
         'dt_model': ['dt_model', 'dt_accuracy', 'dt_y_test', 'dt_y_pred', 'dt_X_train', 'dt_cm', 'dt_report']}
+    # if model is not chosen, then keys associated with that model will be deleted under del_prev_results
     for model, keys in model_keys.items():
         if model != exclude:
             for key in keys:
+                # the keys will have been stored in session_state for use outside of loop key was defined in
                 if key in st.session_state:
                     del st.session_state[key]
 
+# import necessary libraries (this will be used in all models)
 from sklearn.model_selection import train_test_split
 
 # add linear regression option
@@ -300,8 +339,10 @@ if 'model_coef' in st.session_state:
     st.markdown('##### Model Coefficients (Scaled)')
     coef_df = st.session_state.model_coef.reset_index()
     coef_df.columns = ['Feature', 'Coefficient']
+    # put coefficients derived into a dataframe for better visualization
     st.dataframe(coef_df.style.background_gradient(cmap="Blues"))
     st.write(f"**Intercept:** {st.session_state.lin_reg_scaled.intercept_:.3f}")
+    # explain purpose and meaning of coefficients
     st.caption(f'The :blue[***coefficients***] next to each feature name indicates the impact that the feature \
                has on the outcome. The higher the value, the greater the impact.')
     st.caption(f'The :blue[***intercept***] is the value of the outcome given that all the features are set to zero.')
@@ -312,8 +353,10 @@ if 'logreg_model' in st.session_state:
     st.markdown('##### Model Coefficients')
     coef = pd.Series(st.session_state.logreg_model.coef_[0], index = X.columns)
     intercept = st.session_state.logreg_model.intercept_[0]
+    # put coefficients derived into a dataframe for better visualization
     st.dataframe(st.session_state.logreg_coef.rename("Coefficient").to_frame().style.background_gradient(cmap='Blues'))
     st.write("Intercept:", st.session_state.logreg_intercept)
+    # explain purpose and meaning of coefficients
     st.caption(f'The :blue[***coefficients***] next to each feature name indicates the impact that the feature \
                has on the outcome. The higher the value, the greater the impact.')
     st.caption(f'The :blue[***intercept***] is the value of the outcome given that all the features are set to zero.')
@@ -324,6 +367,7 @@ if 'dt_accuracy' in st.session_state:
     import graphviz
     from sklearn import tree
     st.markdown('##### Decision Tree Visualization')
+    # create a dot tree using graphviz
     dot_tree = tree.export_graphviz(st.session_state.dt_model, out_file=None,
                     feature_names = st.session_state.dt_X_train.columns,
                     class_names = ["Outcome 1", "Outcome 2"],
@@ -340,6 +384,7 @@ if 'mse' in st.session_state and 'rmse' in st.session_state and 'r2' in st.sessi
     st.write(f":green-background[**Mean Squared Error (MSE):**] {st.session_state.mse:.3f}")
     st.write(f":violet-background[**Root Mean Squared Error (RMSE):**] {st.session_state.rmse:.3f}")
     st.write(f':red-background[**R-squared (R² Score):**] {st.session_state.r2:.3f}')
+    # explain what each value means for users to assist interpretation
     st.caption('''
                :green[MSE] measures the average of the squared differences between the predicted and actual value of the data.
 
@@ -358,12 +403,14 @@ if 'logreg_accuracy' in st.session_state:
     ax.set_xlabel('Predicted')
     ax.set_ylabel('Actual')
     st.pyplot(fig)
+    # explain the purpse of a confusion matrix and how to read
     st.caption('The :green[***confusion matrix***] is a chart of four boxes displaying the number of correct (top-left and bottom-right) \
                and incorrect (top-right and bottom-left) predictions.')
 # display classification report
     st.markdown('##### Classification Report')
     report_df = pd.DataFrame(st.session_state.logreg_report).transpose()
     st.dataframe(report_df.style.background_gradient(cmap='Reds'))
+    # explain classification report and the important values and how to interpret them
     st.caption('''
                :red[***Accuracy***] is the overall percentage of correct classifications. 
                
@@ -380,10 +427,12 @@ if 'logreg_accuracy' in st.session_state:
     fig, ax = plt.subplots(figsize=(6, 6))
     ax.plot(st.session_state.logreg_fpr, st.session_state.logreg_tpr, lw=2, label=f'ROC Curve (AUC = {st.session_state.logreg_roc_auc:.2f})')
     ax.plot([0, 1], [0, 1], lw=2, linestyle='--', label='Random Guess')
+    # label plot and create legend
     ax.set_xlabel('False Positive Rate')
     ax.set_ylabel('True Positive Rate')
     ax.legend(loc="lower right")
     st.pyplot(fig)
+    # explain the purpose and meaning behind an ROC and how it is to be understood in this context, along with AUC
     st.caption('''
                The :blue[***ROC Curve***], which stands for receiver operating characteristics, is a graph showing the true positive rate \
                vs. the false positive rate at various thresholds.' 
@@ -408,6 +457,7 @@ if 'dt_accuracy' in st.session_state:
     st.markdown('##### Classification Report')
     report_df = pd.DataFrame(st.session_state.dt_report).transpose()
     st.dataframe(report_df.style.background_gradient(cmap='Reds'))
+    # explain classification report and the important values and how to interpret them
     st.caption('''
                :red[***Accuracy***] is the overall percentage of correct classifications. 
                
@@ -424,10 +474,12 @@ if 'dt_accuracy' in st.session_state:
     fig, ax = plt.subplots(figsize=(6, 6))
     ax.plot(st.session_state.dt_fpr, st.session_state.dt_tpr, lw=2, label=f'ROC Curve (AUC = {st.session_state.dt_roc_auc:.2f})')
     ax.plot([0, 1], [0, 1], lw=2, linestyle='--', label='Random Guess')
+    # label plot and create legend
     ax.set_xlabel('False Positive Rate')
     ax.set_ylabel('True Positive Rate')
     ax.legend(loc="lower right")
     st.pyplot(fig)
+    # explain the purpose and meaning behind an ROC and how it is to be understood in this context, along with AUC
     st.caption('''
                The :blue[***ROC Curve***], which stands for **receiver operating characteristics**, is a graph showing the true positive rate \
                vs. the false positive rate at various thresholds.' \
