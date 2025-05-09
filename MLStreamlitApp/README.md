@@ -38,7 +38,7 @@ Now that we understand the tools we are using, let's step into the process!🌟
 - If you wish to run the app without using an enviroment, you can access the deployed version here: [Interactive Machine Learning App](https://kang-data-science-portfolio-7czws8sggmdaop3hcqzrcq.streamlit.app/)
 
 #### :whale2: Running the App :whale2:
-1. Download the project's script, *interactive_ml_app.py*, and requirement file, *requirement.txt*, onto your device by clicking the download icon near the top right corner of the screen <image src="https://static.vecteezy.com/system/resources/previews/019/879/209/non_2x/download-button-on-transparent-background-free-png.png" alt="image" width="21"/>
+1. Download the project's script, *interactive_ml_app.py*, and requirement file, *requirements.txt*, onto your device by clicking the download icon near the top right corner of the screen <image src="https://static.vecteezy.com/system/resources/previews/019/879/209/non_2x/download-button-on-transparent-background-free-png.png" alt="image" width="21"/>
 2. Open File Explorer (Windows) <image src="https://static.wikia.nocookie.net/windows/images/0/04/File_Explorer_Icon.png/revision/latest?cb=20240208004644" alt="image" width="21"/> or Finder (Mac) <image src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Finder_Icon_macOS_Big_Sur.png" alt="image" width="21"/>
 3. Locate both files (the requirements and the script) and place them into a new folder named appropriately together (ex. InteractiveMLApp)
 4. Open the folder onto your environment
