@@ -26,14 +26,28 @@ This portfolio is a collection of my earliest data science works completed durin
 
 **Supervised Machine Learning Application - (2025)** 🌹
 
-❓ _Question_: How can we use supervised machine learning to make sense of the data?
+❓ _Question_: How can we use supervised machine learning to make sense of data?
 
-> This folder contains by first streamlit app that aims to allow users to input datasets and experiment with different ___supervised machine learning___ models, their hyperparameters if applicable, and the effect on the results and model quality. This project grows my understanding on machine learning by teaching me how each model, linear regression, logistic regression, and decision tree, uses the features and dataset given to derive its prediction. This still further enhanced my data science skills by allowing me to make user interactive apps, expanding my ability to work with various datasets and even other people. \
+> This folder contains my first streamlit app that aims to allow users to input datasets and experiment with different ___supervised machine learning___ models, their hyperparameters if applicable, and the effect on the results and model quality. This project grows my understanding on machine learning by teaching me how each model, linear regression, logistic regression, and decision tree, uses the features and dataset given to derive its prediction. This still further enhanced my data science skills by allowing me to make user interactive apps, expanding my ability to work with various datasets and even other people. 
 
 📗 _Languages & Tools_: Python <image src="https://github.com/user-attachments/assets/d332cdc3-f10c-4e89-8f68-9ac60d85d7bc" alt='image' width='20'>
 , VSCode <image src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/2048px-Visual_Studio_Code_1.35_icon.svg.png" alt="image" width="20">, Streamlit <image src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGDKmSgL7UJ6sstMUQTtjI2iDN7ClN2jRZ5Q&s' alt='image' height='22'>
 
 #️⃣ _Key Words_: `Supervised Machine Learning` `Linear Regression` `Logistic Regression` `Decision Tree` `Feedback Performance` `User Interactive` `Streamlit App`
 
-[Supervised Machine Learning App](https://github.com/kangjdh/KANG-Data-Science-Portfolio/tree/main/MLStreamlitApp)
+[Interactive Supervised Machine Learning App](https://github.com/kangjdh/KANG-Data-Science-Portfolio/tree/main/MLStreamlitApp)
 
+---
+
+**Unsupervised Machine Learning Application - (2025)** :blossom:
+
+❓ _Question_: How can we use unsupervised machine learning technique to make sense of data?
+
+> An extension of the streamlit journey above, this app focuses instead on creating a platform for users to try different ___unsupervised machine learning___ techniques, along with experimenting with different hyperparameters and reviewing performance feedback metrics. Through this project, I expanded my knowledge of machine learning by understanding different methods for handling unlabeled data, namely PCA, Kmeans Clustering, and Hierarhcial Clustering, to reduce dimensionality and cluster data points based on similarity. Additionally, I was able to experiment with different streamlit functions to make a user-friendlym aesthetic UI, enhancing important passive skills for data scientists. 
+
+📗 _Languages & Tools_: Python <image src="https://github.com/user-attachments/assets/d332cdc3-f10c-4e89-8f68-9ac60d85d7bc" alt='image' width='20'>
+, VSCode <image src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/2048px-Visual_Studio_Code_1.35_icon.svg.png" alt="image" width="20">, Streamlit <image src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGDKmSgL7UJ6sstMUQTtjI2iDN7ClN2jRZ5Q&s' alt='image' height='22'>
+
+#️⃣ _Key Words_: `unsupervised Machine Learning` `PCA` `KMeans Clustering` `Hierarchial Clustering` `Feedback Performance` `User Interactive` `Streamlit App`
+
+[Interactive Unsupervised Machine Learning App](https://github.com/kangjdh/KANG-Data-Science-Portfolio/tree/main/MLUnsupervisedApp)
