@@ -32,12 +32,16 @@ def reset_model_states(new_df):
         st.session_state.df = new_df
     # create a variable out of first non-numeric column of the dataset to use it as labels for graphs, etc.
     non_numeric_cols = new_df.select_dtypes(exclude=[np.number]).columns
+    # identify the target variable if there is a column with such name in dataframe
     if 'target' in new_df.columns:
+        # save target for future use
         st.session_state.y = new_df['target'].values
         st.session_state.target_names = new_df['target'].unique()
+    # use first non_numeric column name as target, even if not named target explicity
     elif len(non_numeric_cols) > 0:
         st.session_state.y = pd.factorize(new_df[non_numeric_cols[0]])[0]  # encode first non-numeric col
         st.session_state.target_names = new_df[non_numeric_cols[0]].unique()
+    # if neither available, there will be no target identified and remain as None
     else:
         st.session_state.y = None
         st.session_state.target_names = None
@@ -49,12 +53,13 @@ custom_dataset = st.file_uploader(':violet-badge[Step 1:] **Upload your .csv dat
 # label the custom dataset as the df
 if custom_dataset is not None:
     new_df = pd.read_csv(custom_dataset)
+    # this is for the purpose of reseting the model when rerunning a new model with the same dataset
     reset_model_states(new_df)
 
 # include dataset options that can be used in the case user does not have custom dataset
 st.write('Example datasets!:')
 
-# define a helper function to clear the session states from previously run models
+# define a helper function to clear the session states from previously run models called clear_model_states
 # this will get rid of all graphs from previous runs when clicking on a new model
 def clear_model_states(exclude=None):
     model_keys = [
@@ -62,6 +67,7 @@ def clear_model_states(exclude=None):
         'kmeans_clusters', 'kmeans', 'xpca',
         'clustered_dataset', 'cluster_labels', 'X_scaled'
     ]
+    # the following keys will be deleted if they are not in the excluded section for deletion
     for key in model_keys:
         if exclude is None or key not in exclude:
             st.session_state.pop(key, None)
@@ -89,7 +95,7 @@ with col1:
         st.session_state.y = y
 # add a button for the 'Country-Level Indicator' dataset for column 2
 with col2:
-    if st.button('Country-Level Indicator', type='primary'):
+    if st.button('Country Level', type='primary'):
         # download latest version of the dataset from kaggle
         import kagglehub
         path = kagglehub.dataset_download("rohan0301/unsupervised-learning-on-country-data")
@@ -137,13 +143,16 @@ with tab1:
     from sklearn.preprocessing import StandardScaler
     from sklearn.decomposition import PCA
     # explain the purpose of the model, how it works, and its benefits
-    st.write('***Principal Component Analysis***, also known as ***PCA***, is a method of unsupervised machine ' \
+    st.write(':violet[***Principal Component Analysis***], also known as ***PCA***, is a method of unsupervised machine ' \
     'learning that simplifies complex, high-dimensional datasets by reducing the number of components while capturing ' \
     'maximum variance using the principal components.')
     st.write('This **dimensionality reduction** technique increases computational efficiency, enhances data' \
     ' visualization, and prepares data for better model performance.')
+    # extract only numeric columns to use as max number of components user can try for
+    numeric_df = dataset.select_dtypes(include=['number'])
+    max_comps = numeric_df.shape[1]
     # allow users to adjust the number of components they want
-    num_components = st.number_input(':green-badge[Step 3:] **Enter the desired number of components:** ', min_value=2, max_value=10)
+    num_components = st.number_input(':green-badge[Step 3:] **Enter the desired number of components:** ', min_value=2, max_value=max_comps)
     # center and scale the features
     # this step is especially important for PCA since this model is responsive to variable scales 
     scaler = StandardScaler()
@@ -151,7 +160,7 @@ with tab1:
         X_std = scaler.fit_transform(dataset.select_dtypes(include=[np.number]))
     # create a button to run the PCA model against the dataset using the PCA library
     st.markdown(':orange-badge[Step 4:] **Click on the button to run the model!**')
-    if st.button('Run PCA'):
+    if st.button('Run PCA', type='primary'):
         clear_model_states(exclude=['y', 'feature_names', 'target_names'])
         pca = PCA(n_components = num_components)
         X_pca = pca.fit_transform(X_std)
@@ -174,7 +183,7 @@ with tab2:
     from sklearn.preprocessing import StandardScaler
     from sklearn.cluster import KMeans
     # explain the purpose of the model, how it works, and its benefits
-    st.write('***KMeans Clustering*** is a method of grouping data points in _k-clusters_ and finding' \
+    st.write(':violet[***KMeans Clustering***] is a method of grouping data points in _k-clusters_ and finding' \
     ' the optimal centroid for each cluster to discover hidden structures in unlabled data and segment ' \
     'large datasets into meaningful subgroups.')
     st.write('This technique is fast and easy to implement, scales well to large datasets, is intuitive ' \
@@ -189,7 +198,7 @@ with tab2:
         X_std = scaler.fit_transform(dataset.select_dtypes(include=[np.number]))
         # create a button to run the KMeans model against the dataset using the Kmeans library
         st.markdown(':orange-badge[Step 4:] **Click on the button to run the model!**')
-        if st.button('Run KMeans Clustering'):
+        if st.button('Run KMeans Clustering', type='primary'):
             clear_model_states(exclude=['y', 'feature_names', 'target_names'])
             kmeans = KMeans(n_clusters = k_clust, random_state = 42)
             clusters = kmeans.fit_predict(X_std)
@@ -209,6 +218,13 @@ with tab3:
     from sklearn.preprocessing import StandardScaler
     from scipy.cluster.hierarchy import linkage, dendrogram
     from sklearn.cluster import AgglomerativeClustering
+    # explain hierarcial clustering
+    st.write(':violet[***Hierarchial Clustering***] is a method of clustering data based on similarity ' \
+    ' creating a tree like structure called a _dendrogram_. Each data point starts as its own cluster at the bottom and is' \
+    ' progressively merged or split with other data points based on similarity.')
+    st.write('With this technique you can choose the number of clusters after seeing the dendrogram, and it works with' \
+    ' many distance metrics/linkage criteria, provides full merge history for exploratory insight, and is valuable for ' \
+    'gene-expression studies, market segmentation, text/topic grouping, etc.')
     # create a dataframe of just numeric columns since only the features will be preserved from the dataset
     features_df = dataset.select_dtypes(include = [np.number])
     # in the case that there are more than one non-numeric column, only preserve the first
@@ -223,9 +239,12 @@ with tab3:
     else:
         labels = None
     # explain the purpose of a santiy-check visual and broadly how it works
-    st.write('A sanity-check visual is a blah blah blah.')
+    st.write('A **sanity check visual** makes it easy to confirm that there are no obvious errors or anomalies in the data'
+    ' being used that must be addressed.')
+    st.write('Below is a button that provides a histogram representing the distribution of each '
+    'feature that is being used in the model.')
     # make a button for users to optionally view a sanity-check visual
-    if st.button('Sanity-Check Visual'):
+    if st.button('Feature Distribution', type='secondary'):
         features_df.hist(figsize=(12,8), edgecolor="k", bins=15)
         plt.suptitle("Distribution of each numeric feature", y=1.02)
         plt.tight_layout()
@@ -238,7 +257,8 @@ with tab3:
         X_scaled = scaler.fit_transform(features_df)
     # prepare information needed to print a dendrogram
     # explain the purpose of a dendrogram and broadly how it works
-    st.write('A dendrogram blah blah blah.')
+    st.write('A **dendrogram** is a visual representation showing how data points or groups are related based on '
+    'their similarity. This shows similarity structure and reasonable cut heights for k clusters.')
     # Standardize the numeric features (centering and scaling)
     Z = linkage(X_scaled, method="ward")
     # print a dendrogram
@@ -264,11 +284,14 @@ with tab3:
     st.pyplot(plt)
     # clear figure to avoid overlap when figure is redrawn
     plt.clf()
+    # make a sign informing users of the use of ward linkage in this hierarchial clustering method
+    st.info('This model uses **ward linkage** (merging clusters yielding *smallest* increase in total within-cluster' \
+    ' variance))')
     # let users decide the number of k 
-    k = st.number_input(':green-badge[Step 3:] **Enter the desired number for k:** ', min_value=1, max_value=25)
+    k = st.number_input(':green-badge[Step 3:] **Enter the number of clusters desired:** ', min_value=1, max_value=25)
     # create a button to run the Hierarhcial model against the dataset using the hierarchy library
     st.markdown(':orange-badge[Step 4:] **Click on the button to run the model!**')
-    if st.button('Run Hierarchial Clustering'):
+    if st.button('Run Hierarchial Clustering', type='primary'):
         clear_model_states(exclude=['y', 'feature_names', 'target_names'])
         # assign cluster label with fit_predict()
         agg = AgglomerativeClustering(n_clusters=k, linkage="ward")
@@ -299,18 +322,29 @@ if 'pca_xpca' in st.session_state and 'pca_explvar_cumsum' in st.session_state:
 
     # display explained variance ratio (the proportion of variance explained by each component)
     st.write(":violet[**Cumulative Variance Explained:**]", st.session_state.pca_explvar_cumsum)
-    st.caption('**Cumulative variance explained** is how much of the variance in the data' \
+    st.caption(':violet[**Cumulative variance explained**] is how much of the variance in the data' \
     ' can be attributed to the most determinant chosen number of components. The first row is ' \
     'variance explained by the first component, the second row representing that of the first two components, etc.')
     feature_names = st.session_state.feature_names
     pca = st.session_state.pca
     st.write(':blue[**PCA Scatter Plot**]')
     # generate a scatter plot of PCA Scores
+    # this one is to include target names if they exist
     if 'target_names' in st.session_state and 'y' in st.session_state:
         target_names = st.session_state.target_names
         y = st.session_state.y
+        # identify how many unique target names exist
+        n_clusters = len(target_names)
         plt.figure(figsize=(8, 6))
-        colors = ['turquoise', 'hotpink', 'lawngreen', 'violet', 'lightcoral', 'limegreen', 'turquoise']
+        # for aesthetic purposes, create a list of colors to associate with 20 or less clusters
+        pretty_colors = ['turquoise', 'hotpink', 'lawngreen', 'violet', 'lightcoral', 'limegreen', 'turquoise', 'palegreen',
+                  'chartreuse','plum','lightpink', 'deepskyblue', 'deeppink', 'darkorchid', 'powderblue', 'orange', 
+                  'turquoise', 'springgreen', 'mediumspringgreen', 'lightcyan']
+        if n_clusters <= len(pretty_colors):
+            colors = pretty_colors
+        # if there are more than 20 colors needed, this color palette will be the alternative
+        else:
+            colors = sns.color_palette("hls", n_clusters)
         for i, (color, target_name) in enumerate(zip(colors, target_names)):
             plt.scatter(X_pca[y == i, 0], X_pca[y == i, 1], color=color, alpha=0.7,
                         label=target_name, edgecolor='gainsboro', s=60)
@@ -320,32 +354,13 @@ if 'pca_xpca' in st.session_state and 'pca_explvar_cumsum' in st.session_state:
         plt.legend(loc='best')
         plt.grid(True)
         st.pyplot(plt)
+        # explain below the graph what a PCA graphs shows and the purpose of it
         st.caption('The visualization above graphs the data points in relation to the first' \
         ' two principal components. This makes spread and groups easier to see.')
-        # generate a biplot that shows the overlaying feature loadings on PCA scatter plot
-        # compute the loadings (each column of pca.components_ represents a principal component)
-        loadings = pca.components_.T
-        # increase scaling factor by 5 times
-        scaling_factor = 50.0  
-        plt.figure(figsize=(8, 6))
-        # Plot the PCA scores as before
-        for i, (color, target_name) in enumerate(zip(colors, target_names)):
-            plt.scatter(X_pca[y == i, 0], X_pca[y == i, 1], color=color, alpha=0.7,
-                        label=target_name, edgecolor='gainsboro', s=60)
-        # Plot the loadings as arrows
-        for i, feature in enumerate(feature_names):
-            plt.arrow(0, 0, scaling_factor * loadings[i, 0], scaling_factor * loadings[i, 1],
-                    color='cornflowerblue', width=0.02, head_width=0.1)
-            plt.text(scaling_factor * loadings[i, 0] * 1.1, scaling_factor * loadings[i, 1] * 1.1,  # Adjusted text position
-                    feature, color='royalblue', ha='center', va='center')
-        plt.xlabel('Principal Component 1')
-        plt.ylabel('Principal Component 2')
-        plt.title('Biplot: PCA Scores and Loadings')
-        plt.legend(loc='best')
-        plt.grid(True)
-        st.pyplot(plt)
     else:
+        # this graphs the same PCA plot but for datasets that do not have a target
         plt.figure(figsize=(8, 6))
+        # here you can see that the brackets following X_pca are filled with a colon instead
         plt.scatter(X_pca[:, 0], X_pca[:, 1], color='turquoise', alpha=0.7,
                     edgecolor='gainsboro', s=60)
         plt.xlabel('Principal Component 1')
@@ -354,43 +369,23 @@ if 'pca_xpca' in st.session_state and 'pca_explvar_cumsum' in st.session_state:
         plt.legend(loc='best')
         plt.grid(True)
         st.pyplot(plt)
-    st.caption('This scatter plot is the same as above, with the additions of feature loadings' \
-        ' on top to represent the contribution and direction of each feature onto the newly caluclated space.')
+        # explain below the graph what a PCA graphs shows and the purpose of it
+        st.caption('The visualization above graphs the data points in relation to the first' \
+        ' two principal components. This makes spread and groups easier to see.')
 
+    # create the combined scree plot and bar graph against each other to represent optimal number for k
     # generate a scree plot which displays the cumulative explained variance
     # this plot helps in determining how many components to retain (looking for the "elbow")
     n_comps = st.number_input('Enter the number of components to observe variance explained for:', 
                               min_value=1, max_value=X_std.shape[1])
     pca_full = PCA(n_components = n_comps).fit(X_std)
-    cumulative_variance = np.cumsum(pca_full.explained_variance_ratio_)
-    plt.figure(figsize=(8, 6))
-    plt.plot(range(1, len(cumulative_variance)+1), cumulative_variance, marker='o')
-    plt.xlabel('Number of Components')
-    plt.ylabel('Cumulative Explained Variance')
-    plt.title('PCA Variance Explained')
-    plt.xticks(range(1, len(cumulative_variance)+1))
-    plt.grid(True) 
-    st.pyplot(plt)
-
-    # generate a bar plot with variance explained by each component
-    plt.figure(figsize=(8, 6))
-    components = range(1, len(pca_full.explained_variance_ratio_) + 1)
-    plt.bar(components, pca_full.explained_variance_ratio_, alpha=0.7, color='yellowgreen')
-    plt.xlabel('Principal Component')
-    plt.ylabel('Variance Explained')
-    plt.title('Variance Explained by Each Principal Component')
-    plt.xticks(components)
-    plt.grid(True, axis='y')
-    st.pyplot(plt)
-
+    # create a bar plot with each component's variance explained
+    # define variables needed to calculate scree and bar plot
     explained = pca_full.explained_variance_ratio_ * 100  # individual variance (%) per component
     components = np.arange(1, len(explained) + 1)
     cumulative = np.cumsum(explained)
-
-    # create the combined plot
+    # graph bar plot
     fig, ax1 = plt.subplots(figsize=(8, 6))
-
-    # bar plot for individual variance explained
     bar_color = 'lightseagreen'
     ax1.bar(components, explained, color=bar_color, alpha=0.8, label='Individual Variance')
     ax1.set_xlabel('Principal Component')
@@ -401,7 +396,6 @@ if 'pca_xpca' in st.session_state and 'pca_explvar_cumsum' in st.session_state:
     # add percentage labels on each bar
     for i, v in enumerate(explained):
         ax1.text(components[i], v + 1, f"{v:.1f}%", ha='center', va='bottom', fontsize=10, color='black')
-
     # create a second y-axis for cumulative variance explained
     ax2 = ax1.twinx()
     line_color = 'tomato'
@@ -409,19 +403,21 @@ if 'pca_xpca' in st.session_state and 'pca_explvar_cumsum' in st.session_state:
     ax2.set_ylabel('Cumulative Variance Explained (%)', color=line_color)
     ax2.tick_params(axis='y', labelcolor=line_color)
     ax2.set_ylim(0, 100)
-
     # remove grid lines
     ax1.grid(False)
     ax2.grid(False)
-
     # Combine legends from both axes and position the legend inside the plot (middle right)
     lines1, labels1 = ax1.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax1.legend(lines1 + lines2, labels1 + labels2, loc='center right', bbox_to_anchor=(0.85, 0.5))
-
     plt.title('PCA: Variance Explained', pad=20)
     plt.tight_layout()
     st.pyplot(plt)
+    # explain the purpose of the graphs and what each represent
+    st.caption('This graph shows a :red[scree plot], which graphs cumulative variance explained, against ' \
+    'a :green[bar plot] representing variance explained by each individual component.')
+    st.caption('The point on the plot before the added variance '
+    'explained by the next component becomes relatively small increase indicates a good number to use as k.')
 
 # KMean Clustering
 
@@ -433,77 +429,65 @@ if 'kmeans_clusters' in st.session_state: # and 'pca_xpca' in st.session_state:
 
     # Create a scatter plot of the PCA-transformed data, colored by KMeans cluster labels
     plt.figure(figsize=(8, 6))
-    plt.scatter(X_pca[clusters == 0, 0], X_pca[clusters == 0, 1],
-                c='hotpink', alpha=0.7, edgecolor='w', s=60, label='Cluster 0')
-    plt.scatter(X_pca[clusters == 1, 0], X_pca[clusters == 1, 1],
-                c='skyblue', alpha=0.7, edgecolor='w', s=60, label='Cluster 1')
-    # give titles of the scatterplot and its axes
+    # create a list of colors to use to assign to each cluster (up to 17 clusters) for aesthetic purposes
+    pretty_colors = ['hotpink', 'skyblue','aquamarine','violet','palegreen','chartreuse','plum','lightpink', 'deepskyblue', 
+              'deeppink', 'darkorchid', 'powderblue', 'orange', 'turquoise', 'springgreen', 'mediumspringgreen', 'lightcyan']
+    num_clusters = len(np.unique(clusters))
+    # choose colors depending on number of clusters
+    if num_clusters <= len(pretty_colors):
+        colors = pretty_colors
+    else:
+        colors = sns.color_palette("hls", num_clusters)
+    # Iterate over unique cluster labels
+    for cluster_label in np.unique(clusters):
+        # Get indices of data points belonging to the current cluster
+        indices = np.where(clusters == cluster_label)
+        # Scatter plot for the current cluster using the corresponding color
+        # and using the cluster_label as the legend label
+        plt.scatter(X_pca[indices, 0], X_pca[indices, 1],
+                    color=colors[cluster_label], alpha=0.7, edgecolor='gainsboro', s=60, label=f'Cluster {cluster_label}')
+    # label the graph
     plt.xlabel('Principal Component 1')
     plt.ylabel('Principal Component 2')
-    plt.title('KMeans Clustering: 2D PCA Projection')
-    # include a legend to increase comprehendibility and a grid to make the graph an easier read
+    plt.title('2D PCA Projection')
     plt.legend(loc='best')
     plt.grid(True)
-    # print the graph
     st.pyplot(plt)
+    # explain below the graph what a PCA graphs shows and the purpose of it
+    st.caption('The visualization above graphs the data points, color-coded by the clusters as determined by k-means '
+    'clustering, in relation to the first two principal components. This makes spread and groups easier to see.')
 
-    if 'target_names' in st.session_state:
-        target_names = st.session_state.target_names
-        # create another scatter plot that uses the same exact data except gives the label true labels
-        plt.figure(figsize=(8, 6))
-        if len(np.unique(y)) <= 8:
-            colors = ['hotpink', 'skyblue','aquamarine','chartreuse','palegreen','salmon','plum','lightpink']
-            for i, target_name in enumerate(target_names):
-                plt.scatter(X_pca[y == i, 0], X_pca[y == i, 1],
-                            color=colors[i], alpha=0.7, edgecolor='w', s=60, label=target_name)
-        else:
-            import itertools
-            default_colors = plt.cm.Set3.colors
-            colors = itertools.cycle(default_colors)
-            for i, target_name in enumerate(target_names):
-                color = next(colors)
-                plt.scatter(X_pca[y == i, 0], X_pca[y == i, 1],
-                            color=color, alpha=0.7, edgecolor='w', s=60, label=target_name)
-        # # give titles of the scatterplot and its axes
-        plt.xlabel('Principal Component 1')
-        plt.ylabel('Principal Component 2')
-        plt.title('True Labels: 2D PCA Projection')
-        if len(np.unique(y)) > 8:
-            show_legend = st.checkbox("Show Legend", value=True)
-            if show_legend:
-                plt.legend(loc='best')
-        else:
-            plt.legend(loc='best')
-        plt.grid(True)
-        # print the graph
-        st.pyplot(plt)
-
-
-        # to assess how well the clusters match the true labels, create a classification report
-        # display classification report
-        if dataset is not None and 'kmeans_clusters' in st.session_state:
-            if 'target' in locals() or 'y' in locals():
-                try:
-                    # download the necessary libraries
-                    from sklearn.metrics import classification_report
-                    y_true = st.session_state.y
-                    y_pred = st.session_state.kmeans_clusters
-                    report = classification_report(y_true, y_pred, target_names=st.session_state.target_names, output_dict=True)
-                    report_df = pd.DataFrame(report).transpose()
-                    st.markdown('##### Classification Report')
-                    st.dataframe(report_df.style.background_gradient(cmap='Spectral'))
-                    st.caption('''
-                                :green[***Accuracy***] is the overall percentage of correct classifications. 
-                                
-                                :red[***Precision***] is the positive predictive value, or the percentage of data points that were correctly predicted positive. 
-                                
-                                :blue[***Recall***] is the true positive rate, or the portion of actually positive data points that were  that were also 
-                                predicted positive. 
-                                
-                                :red[***F1-Score***] is the balanced mean of precision and recall.
-                                ''')
-                except Exception as e:
-                    st.warning(f":warning: Classification report couldn't be generated: {e} :warning:")
+    # to assess how well the clusters match the true labels, create a classification report
+    # display classification report
+    if dataset is not None and 'kmeans_clusters' in st.session_state:
+        # identify the target or y variable from dataset
+        if 'target' in locals() or 'y' in locals():
+            try:
+                # download the necessary libraries
+                from sklearn.metrics import classification_report
+                # identify the true y and y to be predicted
+                y_true = st.session_state.y
+                y_pred = st.session_state.kmeans_clusters
+                report = classification_report(y_true, y_pred, target_names=st.session_state.target_names, output_dict=True)
+                # create a dataframe from the classifacation report to make it look more appealing
+                report_df = pd.DataFrame(report).transpose()
+                st.markdown('##### Classification Report')
+                st.dataframe(report_df.style.background_gradient(cmap='Spectral'))
+                # explain the important numbers in the classification report that users should understand
+                st.caption('''
+                            :green[***Accuracy***] is the overall percentage of correct classifications. 
+                            
+                            :red[***Precision***] is the positive predictive value, or the percentage of data points that were correctly predicted positive. 
+                            
+                            :blue[***Recall***] is the true positive rate, or the portion of actually positive data points that were  that were also 
+                            predicted positive. 
+                            
+                            :red[***F1-Score***] is the balanced mean of precision and recall.
+                            ''')
+            # make exception warning appear if a classification report cannot be 
+            # this will include if the number of targets identified by script above does not match the number of clusters requested by user
+            except Exception as e:
+                st.warning(f":warning: Classification report couldn't be generated: {e} :warning:")
 
 
     # to evaluate the best number of clusters, calculate using the elbow method and silhouette score
@@ -541,9 +525,17 @@ if 'kmeans_clusters' in st.session_state: # and 'pca_xpca' in st.session_state:
     plt.ylabel('Silhouette Score')
     plt.title('Silhouette Score for Optimal k')
     plt.grid(True)
-    # print both graphs
+    # print both graphs side by side for easy visualization to the eye
     plt.tight_layout()
     st.pyplot(plt)
+    # explain the elbow method
+    st.caption(':orange[**The Elbow Method**] plots the within-cluster sum of squares (WCSS) against' \
+    ' different values of k. The "elbow point," where the rate of decrease changes sharply, ' \
+    'suggests an optimal k.')
+    # explain the silhouette score
+    st.caption(':green[**The Silhouette Score**] quantifies how similar a data point is to its own cluster'
+    ' compared to other clusters. This graph computes the average silhouette score for different '
+    'values of k, with the higher the score being the better.')
 
 # Hierarchial Clustering
 
@@ -568,6 +560,9 @@ if 'clustered_dataset' in st.session_state and 'cluster_labels' in st.session_st
     plt.legend(*scatter.legend_elements(), title="Clusters")
     plt.grid(True)
     st.pyplot(plt)
+    # explain below the graph what a PCA graphs shows and the purpose of it
+    st.caption('The visualization above graphs the data points, color-coded by the clusters as determined by hierarchial'
+    'clustering, in relation to the first two principal components. This makes spread and groups easier to see.')
 
     # create a silhouette elbow to find the optima value for k and its score
     from sklearn.cluster import AgglomerativeClustering
@@ -596,7 +591,9 @@ if 'clustered_dataset' in st.session_state and 'cluster_labels' in st.session_st
     # print best k
     best_k = k_range[np.argmax(sil_scores)]
     st.write(f":violet[Best k by silhouette:] **{best_k}  (score={max(sil_scores):.3f})**")
-
+    st.caption(':violet[**The Silhouette Score**] quantifies how similar a data point is to its own cluster'
+    ' compared to other clusters. This graph computes the average silhouette score for different '
+    'values of k, with the higher the score being the better.')
 
 
 
