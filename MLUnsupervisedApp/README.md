@@ -75,7 +75,7 @@ __Dendrogram__ | Hierarchial tree that uses _ward linkage_, merging clusters tha
 
 [^1]: You can find more detailed descriptions on the app itself
 ---
-#### Tools & References :penguin:
+### Tools & References :penguin:
 
 This app was created through VSCode  <image src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/2048px-Visual_Studio_Code_1.35_icon.svg.png" alt="image" width="19"/>  and Streamlit <image src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGDKmSgL7UJ6sstMUQTtjI2iDN7ClN2jRZ5Q&s" alt="image" width="21"/>
 
