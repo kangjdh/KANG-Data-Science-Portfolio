@@ -84,4 +84,4 @@ Here are the informational references used:
 - [GeeksforGeeks](https://www.geeksforgeeks.org/unsupervised-learning/)
 - [Scikit-Learn](https://www.learndatasci.com/glossary/hierarchical-clustering/)
 ---
-Thank you for visiting my app and I hope you had an informational, useful experience with supervised machine learning! 💙💛
+Thank you for visiting my app and I hope you had an informational, useful experience with unsupervised machine learning! 💙💛
