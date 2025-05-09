@@ -43,7 +43,7 @@ Now let's get to the fun part!
   -  scipy (ver. 1.15.2)
   -  seaborn (ver. 0.13.2)
   -  streamlit (ver. 1.44.1)
-- If you wish to run the app without using an enviroment, you can access the deployed version here: [Interactive Machine Learning App](https://kang-data-science-portfolio-7czws8sggmdaop3hcqzrcq.streamlit.app/)
+- If you wish to run the app without using an enviroment, you can access the deployed version here: [Interactive Unsupervised Machine Learning App](https://kang-data-science-portfolio-7czws8sggmdaop3hcqzrcq.streamlit.app/)
 
 ### :jigsaw: Running the App :jigsaw:
 1. Download the project's script, *unsupervised_ml_app.py*, and requirement file, *requirements.txt*, onto your device by clicking the download icon near the top right corner of the screen <image src="https://static.vecteezy.com/system/resources/previews/019/879/209/non_2x/download-button-on-transparent-background-free-png.png" alt="image" width="21"/>
