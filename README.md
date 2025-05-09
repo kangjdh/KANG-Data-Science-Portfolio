@@ -35,7 +35,7 @@ This portfolio is a collection of my earliest data science works completed durin
 
 #️⃣ _Key Words_: `Supervised Machine Learning` `Linear Regression` `Logistic Regression` `Decision Tree` `Feedback Performance` `User Interactive` `Streamlit App`
 
-[Interactive Supervised Machine Learning App](https://kang-data-science-portfolio-7czws8sggmdaop3hcqzrcq.streamlit.app/)
+[Interactive Supervised Machine Learning App](https://github.com/kangjdh/KANG-Data-Science-Portfolio/tree/main/MLStreamlitApp)
 
 ---
 
@@ -50,5 +50,4 @@ This portfolio is a collection of my earliest data science works completed durin
 
 #️⃣ _Key Words_: `unsupervised Machine Learning` `PCA` `KMeans Clustering` `Hierarchial Clustering` `Feedback Performance` `User Interactive` `Streamlit App`
 
-[Interactive Unsupervised Machine Learning App](https://kang-data-science-portfolio-k84mkkgwhvr2rqkkuaxsyb.streamlit.app/)
-
+[Interactive Unsupervised Machine Learning App](https://github.com/kangjdh/KANG-Data-Science-Portfolio/tree/main/MLUnsupervisedApp)
